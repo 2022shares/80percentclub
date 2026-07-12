@@ -1,0 +1,175 @@
+import mongoose, { Schema, Document } from "mongoose";
+import { IDeal, Platform, Category } from "@/types";
+
+export interface IDealDocument extends IDeal, Document {}
+
+const DealSchema = new Schema<IDealDocument>(
+  {
+    title: {
+      type: String,
+      required: [true, "Product title is required"],
+      trim: true,
+      maxlength: [300, "Title cannot exceed 300 characters"],
+      index: "text",
+    },
+    description: {
+      type: String,
+      trim: true,
+      maxlength: [2000, "Description cannot exceed 2000 characters"],
+    },
+    imageUrl: {
+      type: String,
+      required: [true, "Product image URL is required"],
+    },
+    originalPrice: {
+      type: Number,
+      required: [true, "Original price is required"],
+      min: [1, "Original price must be greater than 0"],
+    },
+    currentPrice: {
+      type: Number,
+      required: [true, "Current price is required"],
+      min: [0, "Current price cannot be negative"],
+    },
+    discountPercentage: {
+      type: Number,
+      required: [true, "Discount percentage is required"],
+      min: [80, "Discount must be at least 80%"],
+      max: [99.9, "Discount cannot exceed 99.9%"],
+      index: true,
+    },
+    platform: {
+      type: String,
+      required: [true, "Platform is required"],
+      enum: ["amazon", "flipkart", "meesho", "myntra", "ajio"],
+      index: true,
+    },
+    category: {
+      type: String,
+      required: [true, "Category is required"],
+      enum: [
+        "electronics",
+        "fashion",
+        "home",
+        "beauty",
+        "sports",
+        "toys",
+        "books",
+        "automotive",
+      ],
+      index: true,
+    },
+    productUrl: {
+      type: String,
+      required: [true, "Product URL is required"],
+    },
+    affiliateUrl: {
+      type: String,
+      required: [true, "Affiliate URL is required"],
+    },
+    rating: {
+      type: Number,
+      min: [0, "Rating cannot be negative"],
+      max: [5, "Rating cannot exceed 5"],
+    },
+    reviewCount: {
+      type: Number,
+      min: [0, "Review count cannot be negative"],
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+      index: true,
+    },
+    expiresAt: {
+      type: Date,
+      index: true,
+    },
+  },
+  {
+    timestamps: true,
+    collection: "deals",
+  }
+);
+
+DealSchema.index({ platform: 1, category: 1, discountPercentage: -1 });
+DealSchema.index({ category: 1, discountPercentage: -1, createdAt: -1 });
+DealSchema.index({ isActive: 1, expiresAt: 1 });
+DealSchema.index({ title: "text", description: "text" });
+
+DealSchema.pre("save", function (next) {
+  const discount = ((this.originalPrice - this.currentPrice) / this.originalPrice) * 100;
+  
+  if (discount < 80) {
+    const err = new Error(
+      `Discount validation failed: ${discount.toFixed(1)}% is below the 80% threshold`
+    );
+    return next(err);
+  }
+  
+  this.discountPercentage = Math.round(discount * 10) / 10;
+  next();
+});
+
+DealSchema.statics.purgeExpired = async function () {
+  const now = new Date();
+  const result = await this.deleteMany({
+    $or: [
+      { expiresAt: { $lt: now } },
+      { isActive: false },
+    ],
+  });
+  return result.deletedCount || 0;
+};
+
+DealSchema.statics.findActive = async function (filters: {
+  platform?: string;
+  category?: string;
+  search?: string;
+  sort?: string;
+  page?: number;
+  limit?: number;
+}) {
+  const { platform, category, search, sort = "discount-desc", page = 1, limit = 24 } = filters;
+
+  const query: Record<string, unknown> = { isActive: true };
+
+  if (platform && platform !== "all") query.platform = platform;
+  if (category && category !== "all") query.category = category;
+  if (search) query.$text = { $search: search };
+
+  query.$or = [
+    { expiresAt: { $exists: false } },
+    { expiresAt: { $gt: new Date() } },
+  ];
+
+  const sortMap: Record<string, string> = {
+    "discount-desc": "-discountPercentage",
+    "discount-asc": "discountPercentage",
+    "price-asc": "currentPrice",
+    "price-desc": "-currentPrice",
+    newest: "-createdAt",
+  };
+
+  const sortBy = sortMap[sort] || "-discountPercentage";
+  const skip = (page - 1) * limit;
+
+  const [deals, total] = await Promise.all([
+    this.find(query).sort(sortBy).skip(skip).limit(limit).lean(),
+    this.countDocuments(query),
+  ]);
+
+  return {
+    deals,
+    pagination: {
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      hasNext: page * limit < total,
+      hasPrev: page > 1,
+    },
+  };
+};
+
+export default mongoose.models.Deal || mongoose.model<IDealDocument>("Deal", DealSchema);
