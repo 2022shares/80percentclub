@@ -4,6 +4,9 @@ import flipkartService from "./flipkartService";
 import meeshoService from "./meeshoService";
 import myntraService from "./myntraService";
 import ajioService from "./ajioService";
+import relianceDigitalService from "./relianceDigitalService";
+import cromaService from "./cromaService";
+import bajajElectronicsService from "./bajajElectronicsService";
 
 export const PLATFORM_CONFIGS: Record<Platform, IPlatformConfig> = {
   amazon: {
@@ -46,6 +49,30 @@ export const PLATFORM_CONFIGS: Record<Platform, IPlatformConfig> = {
     affiliateParam: "utm_source",
     affiliateTag: process.env.AFFILIATE_TAG_AJIO || "80percentclub",
   },
+  "reliance-digital": {
+    name: "Reliance Digital",
+    logo: "/logos/reliance-digital.svg",
+    color: "#E31837",
+    baseUrl: "https://www.reliancedigital.in",
+    affiliateParam: "utm_source",
+    affiliateTag: process.env.AFFILIATE_TAG_RELIANCE || "80percentclub",
+  },
+  croma: {
+    name: "Croma",
+    logo: "/logos/croma.svg",
+    color: "#00A8E1",
+    baseUrl: "https://www.croma.com",
+    affiliateParam: "utm_source",
+    affiliateTag: process.env.AFFILIATE_TAG_CROMA || "80percentclub",
+  },
+  "bajaj-electronics": {
+    name: "Bajaj Electronics",
+    logo: "/logos/bajaj-electronics.svg",
+    color: "#0047BB",
+    baseUrl: "https://www.bajajelectronics.com",
+    affiliateParam: "utm_source",
+    affiliateTag: process.env.AFFILIATE_TAG_BAJAJ || "80percentclub",
+  },
 };
 
 export interface IPlatformService {
@@ -59,6 +86,9 @@ const services: IPlatformService[] = [
   meeshoService,
   myntraService,
   ajioService,
+  relianceDigitalService,
+  cromaService,
+  bajajElectronicsService,
 ];
 
 export async function aggregateAllDeals(): Promise<IRawDeal[]> {
@@ -96,4 +126,4 @@ export async function aggregateAllDeals(): Promise<IRawDeal[]> {
   return validDeals;
 }
 
-export { amazonService, flipkartService, meeshoService, myntraService, ajioService };
+export { amazonService, flipkartService, meeshoService, myntraService, ajioService, relianceDigitalService, cromaService, bajajElectronicsService };
