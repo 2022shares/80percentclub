@@ -1,4 +1,12 @@
-export type Platform = "amazon" | "flipkart" | "meesho" | "myntra" | "ajio";
+export type Platform = 
+  | "amazon" 
+  | "flipkart" 
+  | "meesho" 
+  | "myntra" 
+  | "ajio"
+  | "reliance-digital"
+  | "croma"
+  | "bajaj-electronics";
 
 export type Category = 
   | "electronics" 
