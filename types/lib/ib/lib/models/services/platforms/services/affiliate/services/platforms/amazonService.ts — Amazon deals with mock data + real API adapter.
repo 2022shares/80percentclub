@@ -1,0 +1,123 @@
+import { Platform, IRawDeal, Category } from "@/types";
+import { IPlatformService } from "./index";
+
+class AmazonService implements IPlatformService {
+  private platform: Platform = "amazon";
+
+  getPlatform(): Platform {
+    return this.platform;
+  }
+
+  async fetchDeals(): Promise<IRawDeal[]> {
+    return this.fetchMockDeals();
+  }
+
+  private async fetchMockDeals(): Promise<IRawDeal[]> {
+    const mockDeals: IRawDeal[] = [
+      {
+        title: "Sony WH-1000XM5 Wireless Noise Canceling Headphones",
+        description: "Industry-leading noise cancellation, 30-hour battery life, premium sound quality with LDAC support.",
+        imageUrl: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=400&h=400&fit=crop",
+        originalPrice: 34990,
+        currentPrice: 5999,
+        platform: "amazon",
+        category: "electronics",
+        productUrl: "https://www.amazon.in/dp/B09XS7JWHH",
+        rating: 4.5,
+        reviewCount: 12453,
+        expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
+      },
+      {
+        title: "Samsung 55 inch Crystal 4K UHD Smart LED TV",
+        description: "Crystal Processor 4K, PurColor, HDR, Smart Hub with built-in Alexa.",
+        imageUrl: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=400&h=400&fit=crop",
+        originalPrice: 89990,
+        currentPrice: 16999,
+        platform: "amazon",
+        category: "electronics",
+        productUrl: "https://www.amazon.in/dp/B0BHC9P8RG",
+        rating: 4.3,
+        reviewCount: 8932,
+        expiresAt: new Date(Date.now() + 72 * 60 * 60 * 1000),
+      },
+      {
+        title: "Apple Watch Series 9 GPS 45mm Midnight Aluminum",
+        description: "Advanced health sensors, Always-On Retina display, crash detection, water resistant.",
+        imageUrl: "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=400&h=400&fit=crop",
+        originalPrice: 45900,
+        currentPrice: 8999,
+        platform: "amazon",
+        category: "electronics",
+        productUrl: "https://www.amazon.in/dp/B0CHX1W1XY",
+        rating: 4.6,
+        reviewCount: 5621,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      },
+      {
+        title: "Bose SoundLink Flex Bluetooth Speaker",
+        description: "Portable waterproof speaker with PositionIQ technology, 12-hour battery.",
+        imageUrl: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400&h=400&fit=crop",
+        originalPrice: 16900,
+        currentPrice: 3199,
+        platform: "amazon",
+        category: "electronics",
+        productUrl: "https://www.amazon.in/dp/B0C1M9CDPF",
+        rating: 4.4,
+        reviewCount: 3421,
+      },
+      {
+        title: "Kindle Paperwhite (16 GB) - 6.8 inch display",
+        description: "Waterproof, 10 weeks battery life, 300 ppi glare-free display.",
+        imageUrl: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=400&fit=crop",
+        originalPrice: 18999,
+        currentPrice: 3499,
+        platform: "amazon",
+        category: "electronics",
+        productUrl: "https://www.amazon.in/dp/B09TMF1Y1G",
+        rating: 4.7,
+        reviewCount: 15678,
+      },
+      {
+        title: "Nike Air Zoom Pegasus 40 Running Shoes Men",
+        description: "Responsive cushioning, breathable mesh upper, durable rubber outsole.",
+        imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+        originalPrice: 10995,
+        currentPrice: 2199,
+        platform: "amazon",
+        category: "fashion",
+        productUrl: "https://www.amazon.in/dp/B0BQJWQD8S",
+        rating: 4.2,
+        reviewCount: 2341,
+      },
+      {
+        title: "Philips Air Fryer HD9252/90 - 4.1L Digital",
+        description: "Rapid Air technology, touch screen, 7 presets, dishwasher safe.",
+        imageUrl: "https://images.unsplash.com/photo-1626147116986-4601771470a6?w=400&h=400&fit=crop",
+        originalPrice: 12995,
+        currentPrice: 2499,
+        platform: "amazon",
+        category: "home",
+        productUrl: "https://www.amazon.in/dp/B08L5M9BTJ",
+        rating: 4.5,
+        reviewCount: 18765,
+      },
+      {
+        title: "Dyson V12 Detect Slim Vacuum Cleaner",
+        description: "Laser detect technology, 150AW suction, 60-min runtime, HEPA filtration.",
+        imageUrl: "https://images.unsplash.com/photo-1558317374-067fb5f30001?w=400&h=400&fit=crop",
+        originalPrice: 59900,
+        currentPrice: 11999,
+        platform: "amazon",
+        category: "home",
+        productUrl: "https://www.amazon.in/dp/B09V3KXJPB",
+        rating: 4.6,
+        reviewCount: 3210,
+      },
+    ];
+
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return mockDeals;
+  }
+}
+
+export default new AmazonService();
