@@ -41,7 +41,7 @@ const DealSchema = new Schema<IDealDocument>(
     platform: {
       type: String,
       required: [true, "Platform is required"],
-      enum: ["amazon", "flipkart", "meesho", "myntra", "ajio"],
+      enum: ["amazon", "flipkart", "meesho", "myntra", "ajio", "reliance-digital", "croma", "bajaj-electronics"],
       index: true,
     },
     category: {
