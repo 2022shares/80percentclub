@@ -1,0 +1,28 @@
+import { NextRequest, NextResponse } from "next/server";
+import { connectDB } from "@/lib/db";
+import Deal from "@/lib/models/Deal";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    await connectDB();
+    const deal = await Deal.findById(params.id).lean();
+
+    if (!deal || !deal.isActive) {
+      return NextResponse.json(
+        { success: false, error: "Deal not found or expired" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ success: true, deal });
+  } catch (error) {
+    console.error("Deal detail API error:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to fetch deal" },
+      { status: 500 }
+    );
+  }
+}
